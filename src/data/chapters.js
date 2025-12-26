@@ -4,7 +4,7 @@ export const chapters = [
     month: "SUMMARY",
     title: "Summary",
     body: "4+ years .NET + SQL + reporting + production support.",
-    image: "/src/assets/tiles/summary.jpg",
+    image: "/tiles/summary.jpg",
     modal: {
       heading: "Summary",
       summary:
@@ -25,7 +25,7 @@ export const chapters = [
     month: "EDUCATION",
     title: "Education",
     body: "M.S. Data Science & Engineering • B.Tech Engineering (Gold Medalist).",
-    image: "/src/assets/tiles/education.jpg",
+    image: "${import.meta.env.BASE_URL}tiles/education.jpg",
     modal: {
       heading: "Education",
       summary:
@@ -44,7 +44,7 @@ export const chapters = [
     month: "Q2 ALS",
     title: "Q2 Artificial Lift Services",
     body: "Macola ERP support • SQL forecasting • SSRS reporting.",
-    image: "/src/assets/tiles/q2als.jpg",
+    image: "${import.meta.env.BASE_URL}tiles/q2als.jpg",
     modal: {
       heading: "Q2 Artificial Lift Services",
       summary:
@@ -65,7 +65,7 @@ export const chapters = [
     month: "HEXAGON AB",
     title: "Hexagon AB (2021–2023)",
     body: "Smart3D workflow tooling • SQL automation • reliability improvements.",
-    image: "/src/assets/tiles/hexagon1.jpg",
+    image: "${import.meta.env.BASE_URL}tiles/hexagon1.jpg",
     modal: {
       heading: "Hexagon AB (2021–2023)",
       summary:
@@ -86,7 +86,7 @@ export const chapters = [
     month: "HEXAGON AB",
     title: "Hexagon AB (2019–2021)",
     body: "WinForms/VB.NET tools • stored procedures/views • file parsing pipelines.",
-    image: "/src/assets/tiles/hexagon2.jpg",
+    image: "${import.meta.env.BASE_URL}tiles/hexagon2.jpg",
     modal: {
       heading: "Hexagon AB (2019–2021)",
       summary:
@@ -107,7 +107,7 @@ export const chapters = [
   month: "SKILLS",
   title: "Skills",
   body: "Languages • Databases • Tools • Cloud • Testing • DevOps",
-  image: "/src/assets/tiles/skills.jpg", // <-- keep your image path
+  image: "${import.meta.env.BASE_URL}tiles/skills.jpg", // <-- keep your image path
 
   modal: {
     heading: "Skills",
@@ -133,7 +133,7 @@ export const chapters = [
     month: "PROJECTS",
     title: "Projects",
     body: "AI chatbot + automation workflows.",
-    image: "/src/assets/tiles/projects.jpg",
+    image: "${import.meta.env.BASE_URL}tiles/projects.jpg",
     modal: {
       heading: "Projects",
       summary:
@@ -154,7 +154,7 @@ export const chapters = [
     month: "ACHIEVEMENTS",
     title: "Achievements",
     body: "Gold Medal • STAR Award",
-    image: "/src/assets/tiles/achievements.jpg",
+    image: "${import.meta.env.BASE_URL}tiles/achievements.jpg",
     modal: {
       heading: "Achievements",
       summary:
@@ -172,7 +172,7 @@ export const chapters = [
   month: "NEXT",
   title: "Let’s build something solid",
   body: "Resume • GitHub • LinkedIn • Contact",
-  image: "/src/assets/tiles/final.jpg", // pick a nice background image (or reuse achievements image)
+  image: "${import.meta.env.BASE_URL}tiles/final.jpg", // pick a nice background image (or reuse achievements image)
 
   // mark as full page
   layout: "final",
@@ -185,7 +185,7 @@ export const chapters = [
     ctas: [
       {
         label: "Download Resume (PDF)",
-        href: "src/assets/tiles/Resume_Anuragh_Vasam.pdf", 
+        href: "${import.meta.env.BASE_URL}tiles/Resume_Anuragh_Vasam.pdf", 
         icon: "⬇️",
       },
       {
