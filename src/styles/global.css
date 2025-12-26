@@ -1,0 +1,1457 @@
+:root {
+    --bg0: #070b16;
+    --bg1: #0b1220;
+    --text: #e9eefc;
+    --muted: #a9b3d3;
+    --glass: rgba(255, 255, 255, 0.08);
+    --glass2: rgba(255, 255, 255, 0.12);
+    --shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+    --radius: 28px;
+    --max: 980px;
+
+    /* Chapter card sizing */
+    --cardW: min(920px, calc(100vw - 48px));
+    --cardH: min(560px, calc(100vh - 220px));
+
+    /* Start screen center card sizing */
+    --startCardW: min(760px, calc(100vw - 56px));
+    /* narrower */
+    --startCardH: min(520px, calc(100vh - 220px));
+    /* taller */
+
+    /* Start button sizing (UPDATED) */
+    --startBtnMinW: 70px;
+    --startBtnPadY: 12px;
+    --startBtnPadX: 20px;
+    --startBtnFont: 15px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+html {
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial,
+        "Apple Color Emoji", "Segoe UI Emoji";
+    color: var(--text);
+    background:
+        radial-gradient(1200px 900px at 20% 10%, #163bff22 0%, transparent 60%),
+        radial-gradient(900px 700px at 80% 20%, #00e5ff1a 0%, transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+    overflow-x: hidden;
+}
+
+/* Lock scroll while start screen visible */
+body.noScroll {
+    overflow: hidden;
+}
+
+/* App */
+.appRoot {
+    min-height: 100vh;
+}
+
+.story {
+    width: 100%;
+}
+
+/* Each chapter consumes one viewport and scroll-snaps */
+.chapterViewport {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 140px 0 90px;
+    scroll-snap-align: start;
+}
+
+/* HUD (fixed, like Edge page) */
+.hud {
+    position: fixed;
+    top: 18px;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    pointer-events: none;
+}
+
+.hudInner {
+    width: min(var(--max), calc(100vw - 32px));
+    margin: 0 auto;
+    padding: 14px 16px;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    background: rgba(8, 12, 25, 0.72);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    pointer-events: auto;
+}
+
+.hudBrand {
+    min-width: 210px;
+}
+
+.hudBrandTop {
+    font-weight: 650;
+    letter-spacing: 0.2px;
+}
+
+.hudBrandSub {
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.hudProgress {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.hudPct {
+    font-variant-numeric: tabular-nums;
+    width: 52px;
+    text-align: right;
+    color: var(--text);
+}
+
+.hudBar {
+    flex: 1;
+    height: 8px;
+    border-radius: 99px;
+    background: rgba(255, 255, 255, 0.10);
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.hudBarFill {
+    height: 100%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, rgba(0, 212, 255, 0.75), rgba(22, 59, 255, 0.75));
+}
+
+.hudStep {
+    width: 130px;
+    text-align: right;
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.hudNext {
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text);
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.hudNext:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.hudHint {
+    width: min(var(--max), calc(100vw - 32px));
+    margin: 10px auto 0;
+    padding: 0 6px;
+    color: rgba(233, 238, 252, 0.7);
+    font-size: 12px;
+    pointer-events: none;
+}
+
+/* Chapter layout */
+.chapterWrap {
+    width: var(--cardW);
+    height: var(--cardH);
+    position: relative;
+}
+
+/* Stacked background cards (chapter depth) */
+.stack {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+
+.stackCard {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    box-shadow: var(--shadow);
+    transform-origin: center;
+    filter: blur(0px);
+}
+
+.stackCard1 {
+    transform: translateY(18px) scale(0.985);
+    opacity: 0.55;
+}
+
+.stackCard2 {
+    transform: translateY(36px) scale(0.970);
+    opacity: 0.35;
+}
+
+.stackCard3 {
+    transform: translateY(54px) scale(0.955);
+    opacity: 0.20;
+}
+
+/* Main chapter card */
+.card {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    border-radius: var(--radius);
+    padding: 26px 26px 22px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    transform: translateY(0px) scale(0.995);
+    opacity: 0.94;
+    transition: transform 300ms ease, opacity 300ms ease;
+}
+
+.cardActive {
+    transform: translateY(-2px) scale(1);
+    opacity: 1;
+}
+
+.cardHeader {
+    margin-bottom: 10px;
+}
+
+.cardKicker {
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    color: rgba(233, 238, 252, 0.78);
+    text-transform: uppercase;
+}
+
+.cardTitle {
+    margin: 10px 0 0;
+    font-size: clamp(28px, 4.2vw, 46px);
+    line-height: 1.06;
+    letter-spacing: -0.02em;
+}
+
+.cardBody {
+    margin: 14px 0 0;
+    font-size: 16px;
+    line-height: 1.55;
+    color: rgba(233, 238, 252, 0.88);
+    max-width: 62ch;
+}
+
+.cardMeta {
+    margin-top: 18px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.pill {
+    padding: 8px 10px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(233, 238, 252, 0.88);
+    font-size: 12px;
+}
+
+.cardActions {
+    position: absolute;
+    left: 26px;
+    bottom: 22px;
+}
+
+.cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 650;
+}
+
+.cta:hover {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+/* “Browser chrome” decoration */
+.cardChrome {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 180px;
+    height: 110px;
+    border-radius: 18px;
+    background: rgba(0, 0, 0, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    overflow: hidden;
+}
+
+.dotRow {
+    display: flex;
+    gap: 8px;
+    padding: 12px 12px 0;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.35);
+}
+
+.shine {
+    position: absolute;
+    inset: -40px -60px auto -60px;
+    height: 140px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.18), transparent 55%);
+    transform: rotate(10deg);
+}
+
+/* =========================
+   START SCREEN (Edge-like)
+   ========================= */
+
+.startRoot {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+}
+
+.startBg {
+    position: absolute;
+    inset: -60px;
+    background:
+        radial-gradient(1200px 900px at 18% 20%, rgba(22, 59, 255, 0.22) 0%, transparent 60%),
+        radial-gradient(900px 700px at 82% 28%, rgba(0, 212, 255, 0.16) 0%, transparent 58%),
+        linear-gradient(135deg, #0b1220 0%, #0b3b45 45%, #0a6a43 100%);
+    transform: scale(1.06);
+}
+
+.vignette {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(1200px 800px at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.35) 100%);
+    pointer-events: none;
+}
+
+/* Oversized field: JS animates translate3d on this */
+.tileField {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+/* Scope tile styles to start screen so it never conflicts with other components */
+.startRoot .tile {
+    position: absolute;
+}
+
+.startRoot .tileMover {
+    width: 100%;
+    height: 100%;
+    border-radius: 22px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: 0 42px 110px rgba(0, 0, 0, 0.58);
+    will-change: transform, filter;
+    display: flex;
+    align-items: flex-end;
+}
+
+.startRoot .tileFallback {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(520px 260px at 30% 30%, rgba(255, 255, 255, 0.18), transparent 60%),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.28));
+}
+
+.startRoot .tileText {
+    position: relative;
+    width: 100%;
+    padding: 16px 16px 14px;
+    background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.45));
+}
+
+.startRoot .tileTitle {
+    font-weight: 750;
+    letter-spacing: -0.01em;
+    color: rgba(233, 238, 252, 0.96);
+    font-size: 16px;
+}
+
+.startRoot .tileSub {
+    margin-top: 4px;
+    color: rgba(233, 238, 252, 0.78);
+    font-size: 13px;
+    line-height: 1.25;
+}
+
+/* Center glass panel */
+.glassPanel {
+    position: relative;
+    width: var(--startCardW);
+    min-height: var(--startCardH);
+    padding: 58px 46px 48px;
+    border-radius: 46px;
+    text-align: center;
+
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background:
+        radial-gradient(900px 380px at 30% 30%, rgba(255, 255, 255, 0.12), transparent 55%),
+        linear-gradient(135deg, rgba(14, 32, 40, 0.60), rgba(10, 105, 70, 0.40));
+
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    box-shadow: 0 55px 120px rgba(0, 0, 0, 0.55);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.brandRow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 22px;
+    color: rgba(233, 238, 252, 0.92);
+}
+
+.brandText {
+    font-size: 26px;
+    font-weight: 650;
+    letter-spacing: -0.01em;
+}
+
+.startTitle {
+    margin: 0 auto 26px;
+    max-width: 22ch;
+    font-size: clamp(44px, 5.0vw, 72px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: rgba(233, 238, 252, 0.96);
+    font-weight: 650;
+}
+
+/* Next button (UPDATED: smaller text + balanced size) */
+.startBtn {
+    width: 176px;
+    /* fixed size like Edge */
+    height: 54px;
+    padding: 0;
+    margin: 0 auto;
+    /* IMPORTANT: fixed size, no padding */
+    border-radius: 999px;
+
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    background: rgba(255, 255, 255, 0.92);
+    color: #0b1220;
+
+    font-size: 16px;
+    /* smaller text */
+    font-weight: 600;
+    line-height: 1;
+
+    cursor: pointer;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.18);
+}
+
+.startBtn:hover {
+    background: rgba(255, 255, 255, 0.98);
+}
+
+.startBtn:active {
+    transform: translateY(1px);
+}
+
+/* Responsive */
+@media (max-width: 720px) {
+    .hudInner {
+        gap: 10px;
+    }
+
+    .hudBrand {
+        min-width: 150px;
+    }
+
+    .hudStep {
+        display: none;
+    }
+
+    .cardChrome {
+        display: none;
+    }
+
+    .chapterViewport {
+        padding: 132px 0 80px;
+    }
+
+    .cardBody {
+        font-size: 15px;
+    }
+
+    :root {
+        --startCardW: min(620px, calc(100vw - 44px));
+        --startCardH: min(520px, calc(100vh - 200px));
+        --startBtnMinW: 150px;
+        --startBtnPadY: 11px;
+        --startBtnPadX: 18px;
+        --startBtnFont: 14px;
+    }
+
+.glassPanel {
+    position: relative;
+    width: var(--startCardW);
+    min-height: var(--startCardH);
+
+    padding: 58px 46px 48px;
+    border-radius: 46px;
+    align-items: center;
+    text-align: center;
+
+    /* More transparent "glass" */
+    background: rgba(10, 22, 28, 0.34);
+
+    /* Stronger blur like Edge */
+    backdrop-filter: blur(30px) saturate(1.25);
+    -webkit-backdrop-filter: blur(30px) saturate(1.25);
+
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: 0 55px 120px rgba(0, 0, 0, 0.55);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    overflow: hidden;
+    /* needed for ::before highlight */
+}
+
+/* inner highlight + sheen (Edge-like) */
+.glassPanel::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+
+    background:
+        radial-gradient(900px 420px at 30% 25%, rgba(255, 255, 255, 0.18), transparent 55%),
+        radial-gradient(700px 380px at 75% 65%, rgba(0, 212, 255, 0.10), transparent 58%),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.10), transparent 45%);
+    opacity: 0.85;
+}
+
+/* crisp inner stroke */
+.glassPanel::after {
+    content: "";
+    position: absolute;
+    inset: 1px;
+    border-radius: calc(46px - 1px);
+    pointer-events: none;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    opacity: 0.8;
+}
+}
+
+.startRoot .tileMover {
+    position: relative;
+}
+
+.startRoot .tileMover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.startRoot .tileLabel {
+    position: absolute;
+    left: 14px;
+    bottom: 12px;
+    padding: 8px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 650;
+    color: rgba(233, 238, 252, 0.92);
+    background: rgba(0, 0, 0, 0.28);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(10px);
+}
+
+/* =========================
+   ALT STAGE (Two-card Edge-like)
+   ========================= */
+
+/* =========================
+   ALT STAGE (Two-card Edge-like)
+   ========================= */
+
+:root {
+    /* --frontW: clamp(680px, 58vw, 940px); */
+    --frontW: clamp(560px, 46vw, 780px);
+    /* --backW: clamp(360px, 30vw, 540px); */
+    --backW: clamp(300px, 26vw, 430px);
+
+    /* --frontX: clamp(190px, 22vw, 330px);
+    --backX: clamp(130px, 14vw, 230px); */
+    --frontX: clamp(150px, 16vw, 240px);
+        --backX: clamp(120px, 12vw, 180px);
+
+    --exitX: 260px;
+    --backEnterX: 280px;
+
+    --altDur: 720ms;
+    --altEase: cubic-bezier(.20, .90, .20, 1);
+}
+
+.altStageRoot {
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+/* background image = current front card image, blurred */
+.altBgLayer {
+    position: absolute;
+    inset: -90px;
+    background-size: cover;
+    background-position: center;
+    filter: blur(44px) saturate(1.08);
+    transform: scale(1.15);
+    opacity: 0;
+    transition: opacity var(--altDur) ease;
+}
+
+.altBgA {
+    opacity: 1;
+}
+
+.altBgB.show {
+    opacity: 1;
+}
+
+/* glass over the entire page */
+.altBgGlass {
+    position: absolute;
+    inset: 0;
+    background: rgba(220, 220, 220, 0.62);
+    backdrop-filter: blur(18px) saturate(1.05);
+    -webkit-backdrop-filter: blur(18px) saturate(1.05);
+}
+
+/* stage container */
+.altStage {
+    position: relative;
+    height: 100vh;
+    width: 100%;
+}
+
+/* base card */
+.altCard {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 22px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.10);
+    box-shadow: 0 34px 120px rgba(0, 0, 0, 0.35);
+    will-change: transform, opacity, filter;
+    transition:
+        transform var(--altDur) var(--altEase),
+        opacity var(--altDur) ease,
+        filter var(--altDur) ease;
+}
+
+.altCardMedia {
+    position: absolute;
+    inset: 0;
+}
+
+.altCardMedia img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.altCardFallback {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(0, 0, 0, 0.10));
+}
+
+.altCardShade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 40%, rgba(0, 0, 0, 0.35));
+}
+
+/* content */
+.altCardContent {
+    position: relative;
+    z-index: 2;
+    padding: 26px;
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 14px 50px rgba(0, 0, 0, 0.30);
+}
+
+.altMonthPill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+    padding: 0 14px;
+    border-radius: 999px;
+    background: rgba(180, 90, 90, 0.88);
+    color: #fff;
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.altTitleRow {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.altLogo {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: conic-gradient(from 180deg, #00d4ff, #163bff, #00ffa8, #00d4ff);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+}
+
+.altTitle {
+    font-size: clamp(34px, 3.1vw, 54px);
+    font-weight: 650;
+    line-height: 1.03;
+}
+
+.altBody {
+    margin-top: 16px;
+    max-width: 60ch;
+    font-size: 18px;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.92);
+}
+
+.altCta {
+    display: inline-flex;
+    margin-top: 18px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.35);
+    color: rgba(255, 255, 255, 0.92);
+    text-decoration: none;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+/* ========= Poses ========= */
+
+/* FRONT (big, sharp) */
+.frontL {
+    width: var(--frontW);
+    aspect-ratio: 16/9;
+    transform: translate(-50%, -50%) translateX(calc(var(--frontX) * -1)) scale(1);
+    z-index: 3;
+    opacity: 1;
+    filter: blur(0px);
+}
+
+.frontR {
+    width: var(--frontW);
+    aspect-ratio: 16/9;
+    transform: translate(-50%, -50%) translateX(var(--frontX)) scale(1);
+    z-index: 3;
+    opacity: 1;
+    filter: blur(0px);
+}
+
+/* BACK (small, blurred) */
+.backL {
+    width: var(--backW);
+    aspect-ratio: 16/9;
+    transform: translate(-50%, -50%) translateX(calc(var(--backX) * -1)) scale(0.96);
+    z-index: 2;
+    opacity: 0.72;
+    filter: blur(5px) saturate(0.92);
+}
+
+.backR {
+    width: var(--backW);
+    aspect-ratio: 16/9;
+    transform: translate(-50%, -50%) translateX(var(--backX)) scale(0.96);
+    z-index: 2;
+    opacity: 0.72;
+    filter: blur(5px) saturate(0.92);
+}
+
+/* PRE positions (mounted first, then animate into back/front) */
+.preBackL {
+    width: var(--backW);
+    aspect-ratio: 16/9;
+    transform: translate(-50%, -50%) translateX(calc(var(--backX) * -1 - var(--backEnterX))) scale(0.94);
+    z-index: 1;
+    opacity: 0;
+    filter: blur(9px) saturate(0.90);
+}
+
+.preBackR {
+    width: var(--backW);
+    aspect-ratio: 16/9;
+    transform: translate(-50%, -50%) translateX(calc(var(--backX) + var(--backEnterX))) scale(0.94);
+    z-index: 1;
+    opacity: 0;
+    filter: blur(9px) saturate(0.90);
+}
+
+.preFrontL {
+    width: var(--frontW);
+    aspect-ratio: 16/9;
+    transform: translate(-50%, -50%) translateX(calc(var(--frontX) * -1 - var(--exitX))) scale(0.96);
+    z-index: 1;
+    opacity: 0;
+    filter: blur(10px) saturate(0.92);
+}
+
+.preFrontR {
+    width: var(--frontW);
+    aspect-ratio: 16/9;
+    transform: translate(-50%, -50%) translateX(calc(var(--frontX) + var(--exitX))) scale(0.96);
+    z-index: 1;
+    opacity: 0;
+    filter: blur(10px) saturate(0.92);
+}
+
+/* EXIT (front leaving) */
+.exitFrontL {
+    width: var(--frontW);
+    aspect-ratio: 16/9;
+    transform: translate(-50%, -50%) translateX(calc(var(--frontX) * -1 - var(--exitX))) scale(0.92);
+    z-index: 1;
+    opacity: 0;
+    filter: blur(12px) saturate(0.90);
+}
+
+.exitFrontR {
+    width: var(--frontW);
+    aspect-ratio: 16/9;
+    transform: translate(-50%, -50%) translateX(calc(var(--frontX) + var(--exitX))) scale(0.92);
+    z-index: 1;
+    opacity: 0;
+    filter: blur(12px) saturate(0.90);
+}
+
+/* EXIT (back leaving on prev) */
+.exitBackL {
+    width: var(--backW);
+    aspect-ratio: 16/9;
+    transform: translate(-50%, -50%) translateX(calc(var(--backX) * -1 - 220px)) scale(0.92);
+    z-index: 1;
+    opacity: 0;
+    filter: blur(10px) saturate(0.90);
+}
+
+.exitBackR {
+    width: var(--backW);
+    aspect-ratio: 16/9;
+    transform: translate(-50%, -50%) translateX(calc(var(--backX) + 220px)) scale(0.92);
+    z-index: 1;
+    opacity: 0;
+    filter: blur(10px) saturate(0.90);
+}
+
+/* bottom nav */
+.altNav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 18px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: 0 26px;
+    z-index: 20;
+    color: rgba(255, 255, 255, 0.88);
+}
+
+.altBrand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+}
+
+.altBrandDot {
+    width: 16px;
+    height: 16px;
+    border-radius: 999px;
+    background: conic-gradient(from 180deg, #00d4ff, #163bff, #00ffa8, #00d4ff);
+}
+
+.altSep {
+    opacity: 0.55;
+}
+
+.altNav {
+    position: fixed;
+    /* or absolute, but fixed is best */
+    left: 0;
+    right: 0;
+    bottom: 18px;
+    z-index: 200;
+    /* MUST be higher than altFinalOverlay */
+}
+
+.altNavCenter {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.altIconBtn {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    background: rgba(255, 255, 255, 0.92);
+    color: #0b1220;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.altNextBtn {
+    width: 190px;
+    height: 56px;
+    border-radius: 18px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    background: rgba(255, 255, 255, 0.92);
+    color: #0b1220;
+    font-weight: 650;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.altArrow {
+    font-size: 20px;
+}
+
+.altNavRight {
+    justify-self: end;
+    font-weight: 600;
+    opacity: 0.85;
+}
+
+.altDoneBtn {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 30;
+    padding: 10px 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(0, 0, 0, 0.25);
+    color: rgba(255, 255, 255, 0.92);
+    cursor: pointer;
+}
+
+@media (max-width: 900px) {
+    :root {
+        --frontX: clamp(130px, 16vw, 220px);
+        --backX: clamp(95px, 12vw, 170px);
+    }
+}
+
+@media (max-width: 720px) {
+    .altNav {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        gap: 12px;
+    }
+
+    .altNavLeft,
+    .altNavRight {
+        display: none;
+    }
+}
+
+/* ===== Modal (Edge-like) ===== */
+
+.altModalOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    background: rgba(0, 0, 0, 0.18);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 26px;
+}
+
+.altModal {
+    position: relative;
+    width: min(1280px, calc(100vw - 60px));
+    height: min(720px, calc(100vh - 80px));
+    background: rgba(255, 255, 255, 0.96);
+    border-radius: 20px;
+    box-shadow: 0 50px 130px rgba(0, 0, 0, 0.28);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+}
+
+.altModalClose {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    background: rgba(255, 255, 255, 0.85);
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.altModalInner {
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1.05fr 1.45fr;
+    gap: 28px;
+    padding: 64px 56px 44px;
+}
+
+.altModalTitle {
+    margin: 0;
+    font-size: clamp(34px, 3.2vw, 56px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: #0b1220;
+}
+
+.altModalDesc {
+    margin-top: 14px;
+    max-width: 56ch;
+    font-size: 16px;
+    line-height: 1.55;
+    color: rgba(11, 18, 32, 0.80);
+}
+
+.altModalCta {
+    margin-top: 22px;
+    height: 44px;
+    padding: 0 18px;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    background: rgba(255, 255, 255, 0.85);
+    cursor: pointer;
+    font-weight: 650;
+}
+
+.altModalRight {
+    display: flex;
+    align-items: center;
+}
+
+.altModalGrid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.altModalTile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 14px;
+    border-radius: 14px;
+    background: rgba(240, 246, 255, 0.85);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    min-height: 64px;
+}
+
+.altModalIcon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background: rgba(0, 212, 255, 0.14);
+    font-size: 18px;
+}
+
+.altModalText {
+    font-size: 14px;
+    line-height: 1.25;
+    color: rgba(11, 18, 32, 0.85);
+    font-weight: 600;
+}
+
+@media (max-width: 980px) {
+    .altModalInner {
+        grid-template-columns: 1fr;
+        padding: 56px 22px 22px;
+    }
+
+    .altModalGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.altCard.frontL,
+.altCard.frontR {
+    cursor: pointer;
+}
+
+.altModalBack {
+    margin-top: 18px;
+    padding: 12px 18px;
+    border-radius: 14px;
+    border: 0;
+    background: #111;
+    color: #fff;
+    font-weight: 650;
+    cursor: pointer;
+}
+
+.altModalBack:hover {
+    background: #000;
+}
+
+/* Make left area breathe more like the reference */
+.altModalDesc {
+    margin-top: 12px;
+    max-width: 55ch;
+    color: rgba(11, 18, 32, 0.80);
+    font-size: 16px;
+    line-height: 1.55;
+}
+
+/* FINAL full-page card */
+.altFinalCard {
+    overflow: hidden;
+}
+
+.altFinalWrap {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    padding: 56px 64px 46px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.altFinalHero {
+    max-width: 1100px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.altFinalH1 {
+    margin: 0;
+    font-size: clamp(44px, 5vw, 74px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: rgba(10, 12, 20, 0.92);
+}
+
+.altFinalSub {
+    margin: 14px auto 0;
+    max-width: 70ch;
+    font-size: 18px;
+    line-height: 1.5;
+    color: rgba(10, 12, 20, 0.72);
+}
+
+.altFinalCtas {
+    margin-top: 26px;
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.altFinalBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    border-radius: 16px;
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    color: rgba(10, 12, 20, 0.9);
+    font-weight: 650;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.10);
+    backdrop-filter: blur(10px);
+}
+
+.altFinalBtn:hover {
+    background: rgba(255, 255, 255, 0.92);
+}
+
+.altFinalBtnIcon {
+    width: 28px;
+    height: 28px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    background: rgba(0, 0, 0, 0.06);
+    font-weight: 750;
+}
+
+.altFinalLower {
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 18px;
+    align-items: start;
+}
+
+.altFinalGrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.altFinalTile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 14px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.60);
+    border: 1px solid rgba(0, 0, 0, 0.07);
+    backdrop-filter: blur(10px);
+}
+
+.altFinalTileIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    background: rgba(0, 0, 0, 0.06);
+    font-size: 18px;
+}
+
+.altFinalTileText {
+    color: rgba(10, 12, 20, 0.85);
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.altFinalContact {
+    padding: 16px 16px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.60);
+    border: 1px solid rgba(0, 0, 0, 0.07);
+    backdrop-filter: blur(10px);
+}
+
+.altFinalContactTitle {
+    font-weight: 750;
+    color: rgba(10, 12, 20, 0.92);
+    margin-bottom: 10px;
+}
+
+.altFinalRow {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 10px;
+    padding: 10px 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.altFinalRow:first-of-type {
+    border-top: 0;
+}
+
+.altFinalLabel {
+    color: rgba(10, 12, 20, 0.65);
+    font-weight: 650;
+}
+
+.altFinalValue {
+    color: rgba(10, 12, 20, 0.88);
+    font-weight: 650;
+}
+
+.altFinalLink {
+    color: rgba(10, 12, 20, 0.88);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(10, 12, 20, 0.25);
+}
+
+.altFinalLink:hover {
+    border-bottom-color: rgba(10, 12, 20, 0.55);
+}
+
+@media (max-width: 1020px) {
+    .altFinalWrap {
+        padding: 44px 22px 34px;
+    }
+
+    .altFinalLower {
+        grid-template-columns: 1fr;
+    }
+
+    .altFinalGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 620px) {
+    .altFinalGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ========== FINAL MODE: last chapter becomes full-page ========== */
+
+/* When final chapter is active, stage becomes full screen */
+.altStageRoot.finalMode .altStage {
+    position: absolute;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+}
+
+/* Hide any other cards (if they are still mounted) */
+.altStageRoot.finalMode .altCard:not(.altFinalCard) {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Make the final "card" fill the whole viewport */
+.altStageRoot.finalMode .altFinalCard {
+    position: absolute;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    transform: none !important;
+    overflow: hidden;
+}
+
+/* Make final content breathe more like a page */
+.altStageRoot.finalMode .altFinalWrap {
+    height: 100%;
+    width: 100%;
+    padding: 90px 84px 120px;
+    /* more page-like spacing */
+}
+
+/* Responsive padding */
+@media (max-width: 900px) {
+    .altStageRoot.finalMode .altFinalWrap {
+        padding: 70px 22px 110px;
+    }
+}
+
+/* Hide the final front card while the expanding overlay is visible */
+.altHideForOverlay {
+opacity: 0 !important;
+    pointer-events: none !important;
+    transform: translate3d(0, 0, 0) !important;
+    /* avoid transform flicker */
+}
+
+/* FINAL full-page overlay that expands from card rect to viewport */
+.altFinalOverlay {
+    position: fixed;
+    z-index: 65;
+    overflow: hidden;
+
+    border-radius: 28px;
+    background: rgba(255, 255, 255, 0.65);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.25);
+
+    transition:
+        top 720ms cubic-bezier(.2, .9, .2, 1),
+        left 720ms cubic-bezier(.2, .9, .2, 1),
+        width 720ms cubic-bezier(.2, .9, .2, 1),
+        height 720ms cubic-bezier(.2, .9, .2, 1),
+        border-radius 720ms cubic-bezier(.2, .9, .2, 1),
+        box-shadow 720ms cubic-bezier(.2, .9, .2, 1);
+}
+
+.altFinalOverlay.expanded {
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    border-radius: 0 !important;
+    box-shadow: none;
+}
+
+/* Ensure your final layout fills the overlay */
+.altFinalWrap {
+    height: 100%;
+    width: 100%;
+    padding: 90px 84px 120px;
+}
+
+@media (max-width: 900px) {
+    .altFinalWrap {
+        padding: 70px 22px 110px;
+    }
+}
+
